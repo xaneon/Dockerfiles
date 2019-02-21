@@ -3,9 +3,9 @@ FROM alpine:3.9
 ENV GUID=1000
 ENV USERNAME="alpine"
 
-RUN apk --update add bash wget dpkg-dev sudo 
+RUN apk --update add bash wget dpkg-dev sudo openssh
 
-RUN \
+RUN \ 
     adduser -u $GUID -G wheel -D $USERNAME && \
     rm -rf /var/cache/apk/* && \
     sed -i '/%wheel/s/^# //' /etc/sudoers && \
