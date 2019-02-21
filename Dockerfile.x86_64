@@ -1,7 +1,9 @@
-FROM alpine:latest
+FROM alpine:3.9
+
+ARG PUID
+ARG PGID
 
 RUN apk --update add bash wget dpkg-dev
 
-RUN \
-  useradd bh 
-
+RUN addgroup -g ${PGID} bh && \
+    adduser -D -u ${PUID} -G bh bh
