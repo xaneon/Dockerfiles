@@ -7,12 +7,11 @@ ENV GUID=1000
 
 RUN apk --update add bash wget dpkg-dev sudo 
 
-RUN apk update && \
-    apk add sudo && \
+RUN \
     adduser -u $GUID -G wheel -D alpine && \
-    rm -rf /var/cache/apk/*
-
-RUN echo "root:root" | chpasswd
-RUN echo "alpine:alpine" | chpasswd
+    rm -rf /var/cache/apk/* && \
+    sed -i '/%wheel/s/^# //' /etc/sudoers && \
+    echo "root:root" | chpasswd && \
+    echo "alpine:alpine" | chpasswd
 
 USER alpine
