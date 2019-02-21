@@ -3,13 +3,29 @@ FROM alpine:3.9
 ENV GUID=1000
 ENV USERNAME="alpine"
 
-RUN apk --update add bash wget dpkg-dev sudo openssh
+# Install packages with apk
+RUN apk --update add bash wget dpkg-dev sudo 
+RUN apk add openssh openssh-client openssh-server
 
+# Add user to sudo
 RUN \ 
     adduser -u $GUID -G wheel -D $USERNAME && \
     rm -rf /var/cache/apk/* && \
     sed -i '/%wheel/s/^# //' /etc/sudoers && \
     echo "root:root" | chpasswd && \
     echo "$USERNAME:$USERNAME" | chpasswd
+
+# Add RSA key for SSH, later better outside container
+RUN ssh-keygen -q -t rsa -N '' -f /id_rsa
+RUN ssh-keygen -q -t rsa -N '' -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -q -t ecdsa -N '' -f /etc/ssh/ssh_host_ecdsa_key
+RUN ssh-keygen -o -a 100 -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+
+# SSH setup
+RUN sed -i 's/prohibit-password/yes/' /etc/ssh/sshd_config
+RUN echo "StrictHostKeyChecking=no" >> /etc/ssh/ssh_config
+RUN mkdir /var/run/sshd
+
+EXPOSE 22
 
 USER $USERNAME
