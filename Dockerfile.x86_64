@@ -1,0 +1,7 @@
+FROM alpine:latest
+
+RUN apk --update add bash wget dpkg-dev
+
+RUN \
+  useradd bh 
+
