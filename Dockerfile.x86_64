@@ -1,17 +1,15 @@
 FROM alpine:3.9
 
-ARG GUID
 ENV GUID=1000
-
-# COPY sudoers /etc/
+ENV USERNAME="alpine"
 
 RUN apk --update add bash wget dpkg-dev sudo 
 
 RUN \
-    adduser -u $GUID -G wheel -D alpine && \
+    adduser -u $GUID -G wheel -D $USERNAME && \
     rm -rf /var/cache/apk/* && \
     sed -i '/%wheel/s/^# //' /etc/sudoers && \
     echo "root:root" | chpasswd && \
-    echo "alpine:alpine" | chpasswd
+    echo "$USERNAME:$USERNAME" | chpasswd
 
-USER alpine
+USER $USERNAME
