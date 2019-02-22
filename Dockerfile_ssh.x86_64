@@ -1,0 +1,15 @@
+FROM alpine:3.9
+
+# Install packages with apk
+RUN apk --update add bash wget dpkg-dev sudo 
+RUN apk add openssh openssh-client openssh-server openrc
+
+RUN echo "root:root" | chpasswd
+
+RUN sudo sed -i s/^#PasswordAuthentication\ yes/PasswordAuthentication\ yes/ /etc/ssh/sshd_config
+RUN sudo sed -i s/^#PermitRootLogin\ prohibit-password/PermitRootLogin\ yes/ /etc/ssh/sshd_config
+RUN sudo ssh-keygen -A
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd","-D", "-e"]
